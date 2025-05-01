@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+textarea,
+select,
+button {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+#result {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+}
+
+#romanization {
+    margin-top: 0.5rem;
+    color: #666;
+    font-style: italic;
+}
+
+.nav-links {
+    margin-bottom: 1rem;
+}
+
+.nav-links a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+#responseTime {
+    color: gray;
+    margin-top: 0.5rem;
+} 
