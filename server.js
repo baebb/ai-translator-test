@@ -50,6 +50,7 @@ app.post('/translate', async (req, res) => {
         params.append('auth_key', API_KEY);
         params.append('text', text);
         params.append('target_lang', targetLang);
+        params.append('formality', 'prefer_more');
 
         const startTime = process.hrtime();
         const response = await fetch(API_URL, {
