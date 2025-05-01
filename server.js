@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import Kuroshiro from 'kuroshiro';
 import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
 import dotenv from 'dotenv';
+import OpenAI from 'openai';
 
 dotenv.config();
 
@@ -21,6 +22,11 @@ app.use(express.static('.'));
 
 const API_KEY = process.env.DEEPL_API_KEY;
 const API_URL = 'https://api-free.deepl.com/v2/translate';
+
+// Initialize OpenAI
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 // Initialize Kuroshiro
 const kuroshiro = new Kuroshiro();
@@ -40,6 +46,11 @@ let kuroshiroInitialized = false;
 // Serve index.html at the root path
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve openai.html at /openai path
+app.get('/openai', (req, res) => {
+    res.sendFile(path.join(__dirname, 'openai.html'));
 });
 
 app.post('/translate', async (req, res) => {
@@ -81,6 +92,54 @@ app.post('/translate', async (req, res) => {
         });
     } catch (error) {
         console.error('Translation error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/translate/openai', async (req, res) => {
+    try {
+        const { text, targetLang } = req.body;
+        
+        const startTime = process.hrtime();
+        const completion = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    role: "system",
+                    content: `You are a professional translator. Translate the following text to ${targetLang}. Only respond with the translation, no explanations or additional text.`
+                },
+                {
+                    role: "user",
+                    content: text
+                }
+            ],
+            temperature: 0.3,
+        });
+        const endTime = process.hrtime(startTime);
+        const openaiResponseTimeMs = Math.round((endTime[0] * 1000) + (endTime[1] / 1000000));
+
+        const translation = completion.choices[0].message.content;
+
+        // Add romanization if target language is Japanese and Kuroshiro is initialized
+        let romanization = null;
+        if (targetLang === 'Japanese' && kuroshiroInitialized) {
+            try {
+                romanization = await kuroshiro.convert(translation, {
+                    to: 'romaji',
+                    mode: 'spaced'
+                });
+            } catch (error) {
+                console.error('Romanization error:', error);
+            }
+        }
+
+        res.json({
+            translation,
+            openaiResponseTimeMs,
+            romanization
+        });
+    } catch (error) {
+        console.error('OpenAI Translation error:', error);
         res.status(500).json({ error: error.message });
     }
 });
