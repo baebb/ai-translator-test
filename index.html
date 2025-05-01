@@ -8,16 +8,21 @@
 </head>
 
 <body>
+    <div class="nav-links">
+        <a href="/openai.html">OpenAI Translator →</a>
+    </div>
+
     <h1>AI Translator</h1>
 
-    <textarea id="textInput" rows="4" placeholder="Enter text to translate..."></textarea>
+    <textarea id="textInput" rows="8" placeholder="Enter text to translate..."></textarea>
 
     <select id="languageSelect">
+        <option value="AUTO" selected>Auto (Japanese <> English)</option>
         <option value="DE">German</option>
         <option value="FR">French</option>
         <option value="ES">Spanish</option>
         <option value="IT">Italian</option>
-        <option value="JA" selected>Japanese</option>
+        <option value="JA">Japanese</option>
         <option value="ZH">Chinese (Simplified)</option>
         <!-- Add more languages as needed -->
     </select>
@@ -59,7 +64,7 @@
 
                 let resultText = data.translations[0].text;
                 if (data.romanization) {
-                    resultText += `\n\n${data.romanization}`;
+                    resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
                 }
                 resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
                 timeDiv.textContent = `DeepL API response time: ${data.deeplResponseTimeMs} ms`;

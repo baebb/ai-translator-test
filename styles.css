@@ -5,6 +5,10 @@ body {
     padding: 1rem;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 textarea,
 select,
 button {
@@ -42,5 +46,11 @@ button {
 
 #responseTime {
     color: gray;
+    margin-top: 0.5rem;
+}
+
+.romanization {
+    color: #666;
+    font-style: italic;
     margin-top: 0.5rem;
 } 
