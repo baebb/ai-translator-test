@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { deeplTranslate } from './deepl.js';
 import { openaiTranslate } from './openai.js';
+import { deepseekTranslate } from './deepseek.js';
 
 dotenv.config();
 
@@ -28,6 +29,11 @@ app.get('/openai', (req, res) => {
     res.sendFile(path.join(__dirname, 'openai.html'));
 });
 
+// Serve deepseek.html at /deepseek path
+app.get('/deepseek', (req, res) => {
+    res.sendFile(path.join(__dirname, 'deepseek.html'));
+});
+
 app.post('/translate', async (req, res) => {
     try {
         const { text, targetLang } = req.body;
@@ -46,6 +52,17 @@ app.post('/translate/openai', async (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('OpenAI Translation error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/translate/deepseek', async (req, res) => {
+    try {
+        const { text, targetLang } = req.body;
+        const result = await deepseekTranslate(text, targetLang);
+        res.json(result);
+    } catch (error) {
+        console.error('DeepSeek Translation error:', error);
         res.status(500).json({ error: error.message });
     }
 });

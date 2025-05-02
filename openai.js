@@ -31,11 +31,14 @@ export async function openaiTranslate(text, targetLang) {
 
     const startTime = process.hrtime();
     const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4-turbo-preview",
         messages: [
             {
                 role: "system",
-                content: `You are a professional translator. Translate the following text to ${targetLanguageName}. Only respond with the translation, no explanations or additional text.`
+                content: `You are a professional translator. 
+Translate the following text to ${targetLanguageName}. 
+Prefer to use common words and phrases and slightly more polite language. 
+Only output the translation, no explanations.`
             },
             {
                 role: "user",

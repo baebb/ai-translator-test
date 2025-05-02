@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>AI Translator (OpenAI)</title>
+    <title>AI Translator (DeepSeek)</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -12,7 +12,7 @@
         <a href="/">← Back to DeepL Translator</a>
     </div>
 
-    <h1>AI Translator (OpenAI)</h1>
+    <h1>AI Translator (DeepSeek)</h1>
 
     <textarea id="textInput" rows="8" placeholder="Enter text to translate..."></textarea>
 
@@ -48,7 +48,7 @@
             timeDiv.textContent = '';
 
             try {
-                const response = await fetch('/translate/openai', {
+                const response = await fetch('/translate/deepseek', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -67,7 +67,7 @@
                     resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
                 }
                 resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-                timeDiv.textContent = `OpenAI API response time: ${data.openaiResponseTimeMs} ms`;
+                timeDiv.textContent = `DeepSeek API response time: ${data.deepseekResponseTimeMs} ms`;
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
                 console.error('Translation error:', error);
