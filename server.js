@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { deeplTranslate } from './deepl.js';
 import { openaiTranslate } from './openai.js';
 import { deepseekTranslate } from './deepseek.js';
+import { googleTranslate } from './google-basic.js';
 
 dotenv.config();
 
@@ -32,6 +33,11 @@ app.get('/openai', (req, res) => {
 // Serve deepseek.html at /deepseek path
 app.get('/deepseek', (req, res) => {
     res.sendFile(path.join(__dirname, 'deepseek.html'));
+});
+
+// Serve google-basic.html at /google-basic path
+app.get('/google-basic', (req, res) => {
+    res.sendFile(path.join(__dirname, 'google-basic.html'));
 });
 
 app.post('/translate', async (req, res) => {
@@ -63,6 +69,17 @@ app.post('/translate/deepseek', async (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('DeepSeek Translation error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/translate/google-basic', async (req, res) => {
+    try {
+        const { text, targetLang } = req.body;
+        const result = await googleTranslate(text, targetLang);
+        res.json(result);
+    } catch (error) {
+        console.error('Google Translation error:', error);
         res.status(500).json({ error: error.message });
     }
 });
