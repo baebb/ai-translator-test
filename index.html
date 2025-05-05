@@ -9,7 +9,10 @@
 
 <body>
     <div class="nav-links">
+        <a href="/deepl.html">DeepL Translator →</a>
         <a href="/openai.html">OpenAI Translator →</a>
+        <a href="/deepseek.html">DeepSeek Translator →</a>
+        <a href="/google-v2.html">Google Translator →</a>
     </div>
 
     <h1>AI Translator</h1>
@@ -29,48 +32,136 @@
 
     <button id="translateBtn">Translate</button>
 
-    <div id="result"></div>
-    <div id="responseTime" style="color: gray; margin-top: 0.5rem;"></div>
+    <div id="results">
+        <div class="translation-result">
+            <h3>DeepL Translation</h3>
+            <div id="deeplResult"></div>
+            <div id="deeplResponseTime" style="color: gray; margin-top: 0.5rem;"></div>
+        </div>
+
+        <div class="translation-result">
+            <h3>OpenAI Translation</h3>
+            <div id="openaiResult"></div>
+            <div id="openaiResponseTime" style="color: gray; margin-top: 0.5rem;"></div>
+        </div>
+
+        <div class="translation-result">
+            <h3>DeepSeek Translation</h3>
+            <div id="deepseekResult"></div>
+            <div id="deepseekResponseTime" style="color: gray; margin-top: 0.5rem;"></div>
+        </div>
+
+        <div class="translation-result">
+            <h3>Google Translation</h3>
+            <div id="googleResult"></div>
+            <div id="googleResponseTime" style="color: gray; margin-top: 0.5rem;"></div>
+        </div>
+    </div>
 
     <script>
         async function translate() {
             const text = document.getElementById('textInput').value;
             const targetLang = document.getElementById('languageSelect').value;
-            const resultDiv = document.getElementById('result');
-            const timeDiv = document.getElementById('responseTime');
 
             if (!text.trim()) {
-                resultDiv.textContent = 'Please enter some text to translate';
+                document.querySelectorAll('.translation-result div[id$="Result"]').forEach(el => {
+                    el.textContent = 'Please enter some text to translate';
+                });
                 return;
             }
 
-            resultDiv.textContent = 'Translating...';
-            timeDiv.textContent = '';
+            // Set loading state for all results
+            document.querySelectorAll('.translation-result div[id$="Result"]').forEach(el => {
+                el.textContent = 'Translating...';
+            });
+            document.querySelectorAll('.translation-result div[id$="ResponseTime"]').forEach(el => {
+                el.textContent = '';
+            });
 
             try {
-                const response = await fetch('/translate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ text, targetLang })
+                // Start all translation requests in parallel
+                Promise.all([
+                    // DeepL Translation
+                    fetch('/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, targetLang })
+                    }).then(response => response.json())
+                        .then(data => updateResult('deepl', data))
+                        .catch(error => updateResult('deepl', { error: error.message })),
+
+                    // OpenAI Translation
+                    fetch('/translate/openai', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, targetLang })
+                    }).then(response => response.json())
+                        .then(data => updateResult('openai', data))
+                        .catch(error => updateResult('openai', { error: error.message })),
+
+                    // DeepSeek Translation
+                    fetch('/translate/deepseek', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, targetLang })
+                    }).then(response => response.json())
+                        .then(data => updateResult('deepseek', data))
+                        .catch(error => updateResult('deepseek', { error: error.message })),
+
+                    // Google Translation
+                    fetch('/translate/google-v2', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, targetLang })
+                    }).then(response => response.json())
+                        .then(data => updateResult('google', data))
+                        .catch(error => updateResult('google', { error: error.message }))
+                ]).catch(error => {
+                    console.error('Translation error:', error);
                 });
 
-                const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                let resultText = data.translations[0].text;
-                if (data.romanization) {
-                    resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
-                }
-                resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-                timeDiv.textContent = `DeepL API response time: ${data.deeplResponseTimeMs} ms`;
             } catch (error) {
-                resultDiv.textContent = 'Error: ' + error.message;
+                document.querySelectorAll('.translation-result div[id$="Result"]').forEach(el => {
+                    el.textContent = 'Error: ' + error.message;
+                });
                 console.error('Translation error:', error);
+            }
+        }
+
+        function updateResult(service, data) {
+            const resultDiv = document.getElementById(`${service}Result`);
+            const timeDiv = document.getElementById(`${service}ResponseTime`);
+
+            if (data.error) {
+                resultDiv.textContent = 'Error: ' + data.error;
+                return;
+            }
+
+            let resultText;
+            switch (service) {
+                case 'deepl':
+                    resultText = data.translations[0].text;
+                    break;
+                case 'openai':
+                case 'deepseek':
+                    resultText = data.translation;
+                    break;
+                case 'google':
+                    resultText = data.translatedText;
+                    break;
+                default:
+                    resultText = 'Unknown translation format';
+            }
+
+            if (data.romanization) {
+                resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
+            }
+            resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
+
+            const responseTime = data.deeplResponseTimeMs || data.openaiResponseTimeMs ||
+                data.deepseekResponseTimeMs || data.googleResponseTimeMs;
+            if (responseTime) {
+                timeDiv.textContent = `${service.charAt(0).toUpperCase() + service.slice(1)} API response time: ${responseTime} ms`;
             }
         }
 

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>AI Translator (OpenAI)</title>
+    <title>AI Translator (Google V2)</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -12,18 +12,18 @@
         <a href="/">← Back to multi-translator</a>
     </div>
 
-    <h1>AI Translator (OpenAI)</h1>
+    <h1>AI Translator (Google V2)</h1>
 
     <textarea id="textInput" rows="8" placeholder="Enter text to translate..."></textarea>
 
     <select id="languageSelect">
         <option value="AUTO" selected>Auto (Japanese <> English)</option>
-        <option value="German">German</option>
-        <option value="French">French</option>
-        <option value="Spanish">Spanish</option>
-        <option value="Italian">Italian</option>
-        <option value="Japanese">Japanese</option>
-        <option value="Chinese">Chinese (Simplified)</option>
+        <option value="DE">German</option>
+        <option value="FR">French</option>
+        <option value="ES">Spanish</option>
+        <option value="IT">Italian</option>
+        <option value="JA">Japanese</option>
+        <option value="ZH">Chinese (Simplified)</option>
         <!-- Add more languages as needed -->
     </select>
 
@@ -48,7 +48,7 @@
             timeDiv.textContent = '';
 
             try {
-                const response = await fetch('/translate/openai', {
+                const response = await fetch('/translate/google-v2', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -62,12 +62,12 @@
                     throw new Error(data.error);
                 }
 
-                let resultText = data.translation;
+                let resultText = data.translatedText;
                 if (data.romanization) {
                     resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
                 }
                 resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-                timeDiv.textContent = `OpenAI API response time: ${data.openaiResponseTimeMs} ms`;
+                timeDiv.textContent = `Google API response time: ${data.googleResponseTimeMs} ms`;
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
                 console.error('Translation error:', error);

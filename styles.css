@@ -18,11 +18,25 @@ button {
     font-size: 1rem;
 }
 
-#result {
+#results {
     margin-top: 2rem;
+}
+
+.translation-result {
+    margin-bottom: 1.5rem;
     padding: 1rem;
     background-color: #f2f2f2;
     border-radius: 5px;
+}
+
+.translation-result h3 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.translation-result div[id$="Result"] {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 #romanization {
@@ -33,11 +47,15 @@ button {
 
 .nav-links {
     margin-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .nav-links a {
     color: #0066cc;
     text-decoration: none;
+    padding: 0.25rem 0;
 }
 
 .nav-links a:hover {
@@ -53,4 +71,13 @@ button {
     color: #666;
     font-style: italic;
     margin-top: 0.5rem;
+}
+
+#result {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 } 

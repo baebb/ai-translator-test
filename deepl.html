@@ -3,16 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>AI Translator (Google)</title>
+    <title>AI Translator (DeepL)</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="nav-links">
-        <a href="/">← Back to DeepL Translator</a>
+        <a href="/">← Back to multi-translator</a>
     </div>
 
-    <h1>AI Translator (Google)</h1>
+    <h1>AI Translator (DeepL)</h1>
 
     <textarea id="textInput" rows="8" placeholder="Enter text to translate..."></textarea>
 
@@ -48,7 +48,7 @@
             timeDiv.textContent = '';
 
             try {
-                const response = await fetch('/translate/google-basic', {
+                const response = await fetch('/translate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -62,12 +62,12 @@
                     throw new Error(data.error);
                 }
 
-                let resultText = data.translatedText;
+                let resultText = data.translations[0].text;
                 if (data.romanization) {
                     resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
                 }
                 resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-                timeDiv.textContent = `Google API response time: ${data.googleResponseTimeMs} ms`;
+                timeDiv.textContent = `DeepL API response time: ${data.deeplResponseTimeMs} ms`;
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
                 console.error('Translation error:', error);

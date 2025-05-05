@@ -7,7 +7,7 @@ export async function deepseekTranslate(text, targetLang) {
         // Detect source language if AUTO is selected
         const sourceLang = targetLang === 'AUTO' ? await detectLanguage(text) : null;
         const finalTargetLang = targetLang === 'AUTO' 
-            ? (sourceLang === 'Japanese' ? 'English' : 'Japanese')
+            ? (sourceLang === 'JA' ? 'English' : 'Japanese')
             : targetLang;
 
         const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
@@ -47,6 +47,8 @@ Only output the translation, no explanations.`
         let romanization = null;
         if (finalTargetLang === 'Japanese') {
             romanization = await romanizeJapanese(translation);
+        } else if (sourceLang === 'JA') {
+            romanization = await romanizeJapanese(text);
         }
 
         const endTime = Date.now();

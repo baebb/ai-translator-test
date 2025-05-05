@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import { deeplTranslate } from './deepl.js';
 import { openaiTranslate } from './openai.js';
 import { deepseekTranslate } from './deepseek.js';
-import { googleTranslate } from './google-basic.js';
+import { googleTranslate } from './google-v2.js';
 
 dotenv.config();
 
@@ -25,6 +25,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Serve deepl.html at /deepl path
+app.get('/deepl', (req, res) => {
+    res.sendFile(path.join(__dirname, 'deepl.html'));
+});
+
 // Serve openai.html at /openai path
 app.get('/openai', (req, res) => {
     res.sendFile(path.join(__dirname, 'openai.html'));
@@ -35,9 +40,9 @@ app.get('/deepseek', (req, res) => {
     res.sendFile(path.join(__dirname, 'deepseek.html'));
 });
 
-// Serve google-basic.html at /google-basic path
-app.get('/google-basic', (req, res) => {
-    res.sendFile(path.join(__dirname, 'google-basic.html'));
+// Serve google-v2.html at /google-v2 path
+app.get('/google-v2', (req, res) => {
+    res.sendFile(path.join(__dirname, 'google-v2.html'));
 });
 
 app.post('/translate', async (req, res) => {
@@ -73,7 +78,7 @@ app.post('/translate/deepseek', async (req, res) => {
     }
 });
 
-app.post('/translate/google-basic', async (req, res) => {
+app.post('/translate/google-v2', async (req, res) => {
     try {
         const { text, targetLang } = req.body;
         const result = await googleTranslate(text, targetLang);
