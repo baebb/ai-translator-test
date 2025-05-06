@@ -1,4 +1,4 @@
-import { detectLanguage, romanizeJapanese } from './utils.js';
+import { detectLanguage, romanizeJapanese } from '../utils.js';
 
 export async function deepseekTranslate(text, targetLang) {
     const startTime = Date.now();

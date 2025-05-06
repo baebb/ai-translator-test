@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { romanizeJapanese, detectLanguage } from './utils.js';
+import { romanizeJapanese, detectLanguage } from '../utils.js';
 
 dotenv.config();
 

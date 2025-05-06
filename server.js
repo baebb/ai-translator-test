@@ -3,10 +3,10 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { deeplTranslate } from './deepl.js';
-import { openaiTranslate } from './openai.js';
-import { deepseekTranslate } from './deepseek.js';
-import { googleTranslate } from './google-v2.js';
+import { deeplTranslate } from './translators/deepl.js';
+import { openaiTranslate } from './translators/openai.js';
+import { deepseekTranslate } from './translators/deepseek.js';
+import { googleTranslate } from './translators/google-v2.js';
 
 dotenv.config();
 

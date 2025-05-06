@@ -1,4 +1,4 @@
-import { romanizeJapanese, detectLanguage } from './utils.js';
+import { romanizeJapanese, detectLanguage } from '../utils.js';
 
 const API_KEY = process.env.GOOGLE_TRANSLATION_API_KEY;
 const API_URL = 'https://translation.googleapis.com/language/translate/v2';
