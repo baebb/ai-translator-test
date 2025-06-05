@@ -17,6 +17,13 @@
 
     <h1>AI Translator (multi)</h1>
 
+    <div class="service-selector">
+        <label><input type="checkbox" name="service" value="deepl" checked> DeepL</label>
+        <label><input type="checkbox" name="service" value="openai" checked> OpenAI</label>
+        <label><input type="checkbox" name="service" value="deepseek" checked> DeepSeek</label>
+        <label><input type="checkbox" name="service" value="google" checked> Google</label>
+    </div>
+
     <textarea id="textInput" rows="8" placeholder="Enter text to translate..."></textarea>
 
     <select id="languageSelect">
@@ -59,6 +66,24 @@
     </div>
 
     <script>
+        // Add service visibility handling
+        function updateServiceVisibility() {
+            const checkboxes = document.querySelectorAll('input[name="service"]');
+            checkboxes.forEach(checkbox => {
+                const service = checkbox.value;
+                const resultDiv = document.querySelector(`.translation-result:has(#${service}Result)`);
+                resultDiv.style.display = checkbox.checked ? 'block' : 'none';
+            });
+        }
+
+        // Add event listeners for checkboxes
+        document.querySelectorAll('input[name="service"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateServiceVisibility);
+        });
+
+        // Initialize visibility
+        updateServiceVisibility();
+
         async function translate() {
             const text = document.getElementById('textInput').value;
             const targetLang = document.getElementById('languageSelect').value;
@@ -70,59 +95,41 @@
                 return;
             }
 
-            // Set loading state for all results
-            document.querySelectorAll('.translation-result div[id$="Result"]').forEach(el => {
-                el.textContent = 'Translating...';
-            });
-            document.querySelectorAll('.translation-result div[id$="ResponseTime"]').forEach(el => {
-                el.textContent = '';
+            // Set loading state for visible results only
+            document.querySelectorAll('input[name="service"]:checked').forEach(checkbox => {
+                const service = checkbox.value;
+                document.getElementById(`${service}Result`).textContent = 'Translating...';
+                document.getElementById(`${service}ResponseTime`).textContent = '';
             });
 
             try {
-                // Start all translation requests in parallel
-                Promise.all([
-                    // DeepL Translation
-                    fetch('/translate', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text, targetLang })
-                    }).then(response => response.json())
-                        .then(data => updateResult('deepl', data))
-                        .catch(error => updateResult('deepl', { error: error.message })),
+                // Get selected services
+                const selectedServices = Array.from(document.querySelectorAll('input[name="service"]:checked'))
+                    .map(checkbox => checkbox.value);
 
-                    // OpenAI Translation
-                    fetch('/translate/openai', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text, targetLang })
-                    }).then(response => response.json())
-                        .then(data => updateResult('openai', data))
-                        .catch(error => updateResult('openai', { error: error.message })),
+                // Create array of promises for selected services only
+                const translationPromises = selectedServices.map(service => {
+                    const endpoint = service === 'google' ? '/translate/google-v2' :
+                        `/translate${service === 'deepl' ? '' : '/' + service}`;
 
-                    // DeepSeek Translation
-                    fetch('/translate/deepseek', {
+                    return fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ text, targetLang })
                     }).then(response => response.json())
-                        .then(data => updateResult('deepseek', data))
-                        .catch(error => updateResult('deepseek', { error: error.message })),
+                        .then(data => updateResult(service, data))
+                        .catch(error => updateResult(service, { error: error.message }));
+                });
 
-                    // Google Translation
-                    fetch('/translate/google-v2', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text, targetLang })
-                    }).then(response => response.json())
-                        .then(data => updateResult('google', data))
-                        .catch(error => updateResult('google', { error: error.message }))
-                ]).catch(error => {
+                // Execute selected translations in parallel
+                Promise.all(translationPromises).catch(error => {
                     console.error('Translation error:', error);
                 });
 
             } catch (error) {
-                document.querySelectorAll('.translation-result div[id$="Result"]').forEach(el => {
-                    el.textContent = 'Error: ' + error.message;
+                document.querySelectorAll('input[name="service"]:checked').forEach(checkbox => {
+                    const service = checkbox.value;
+                    document.getElementById(`${service}Result`).textContent = 'Error: ' + error.message;
                 });
                 console.error('Translation error:', error);
             }
