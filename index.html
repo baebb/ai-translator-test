@@ -8,6 +8,20 @@
 </head>
 
 <body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"></button>
+    <script>
+        const toggle = document.getElementById('themeToggle');
+        const saved = localStorage.getItem('theme');
+        const theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+        toggle.textContent = theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+        toggle.addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            toggle.textContent = next === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+        });
+    </script>
     <div class="nav-links">
         <a href="/deepl.html">DeepL Translator →</a>
         <a href="/openai.html">OpenAI Translator →</a>

@@ -1,12 +1,59 @@
+:root {
+    --bg: #ffffff;
+    --text: #000000;
+    --card-bg: #f2f2f2;
+    --heading: #333;
+    --muted: #666;
+    --link: #0066cc;
+    --border: #ccc;
+    --input-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+    --bg: #1a1a1a;
+    --text: #e0e0e0;
+    --card-bg: #2a2a2a;
+    --heading: #ccc;
+    --muted: #999;
+    --link: #5599dd;
+    --border: #444;
+    --input-bg: #2a2a2a;
+}
+
 body {
     font-family: Arial, sans-serif;
     max-width: 600px;
     margin: 2rem auto;
     padding: 1rem;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color 0.2s, color 0.2s;
 }
 
 * {
     box-sizing: border-box;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.4rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.theme-toggle:hover {
+    opacity: 0.8;
 }
 
 textarea,
@@ -16,6 +63,9 @@ button {
     margin-top: 1rem;
     padding: 0.5rem;
     font-size: 1rem;
+    background-color: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 
 #results {
@@ -25,13 +75,13 @@ button {
 .translation-result {
     margin-bottom: 1.5rem;
     padding: 1rem;
-    background-color: #f2f2f2;
+    background-color: var(--card-bg);
     border-radius: 5px;
 }
 
 .translation-result h3 {
     margin: 0 0 0.5rem 0;
-    color: #333;
+    color: var(--heading);
 }
 
 .translation-result div[id$="Result"] {
@@ -41,7 +91,7 @@ button {
 
 #romanization {
     margin-top: 0.5rem;
-    color: #666;
+    color: var(--muted);
     font-style: italic;
 }
 
@@ -53,7 +103,7 @@ button {
 }
 
 .nav-links a {
-    color: #0066cc;
+    color: var(--link);
     text-decoration: none;
     padding: 0.25rem 0;
 }
@@ -68,7 +118,7 @@ button {
 }
 
 .romanization {
-    color: #666;
+    color: var(--muted);
     font-style: italic;
     margin-top: 0.5rem;
 }
@@ -76,7 +126,7 @@ button {
 #result {
     margin-top: 1rem;
     padding: 1rem;
-    background-color: #f2f2f2;
+    background-color: var(--card-bg);
     border-radius: 5px;
     white-space: pre-wrap;
     word-wrap: break-word;
