@@ -62,11 +62,20 @@
                     throw new Error(data.error);
                 }
 
-                let resultText = data.translation;
+                resultDiv.textContent = '';
+                data.translation.split('\n').forEach((line, i) => {
+                    if (i > 0) resultDiv.appendChild(document.createElement('br'));
+                    resultDiv.appendChild(document.createTextNode(line));
+                });
+
                 if (data.romanization) {
-                    resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
+                    resultDiv.appendChild(document.createElement('br'));
+                    resultDiv.appendChild(document.createElement('br'));
+                    const romanSpan = document.createElement('span');
+                    romanSpan.className = 'romanization';
+                    romanSpan.innerHTML = data.romanization;
+                    resultDiv.appendChild(romanSpan);
                 }
-                resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
                 timeDiv.textContent = `DeepSeek API response time: ${data.responseTimeMs} ms`;
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
