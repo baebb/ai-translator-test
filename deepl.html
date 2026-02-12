@@ -62,12 +62,12 @@
                     throw new Error(data.error);
                 }
 
-                let resultText = data.translations[0].text;
+                let resultText = data.translation;
                 if (data.romanization) {
                     resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
                 }
                 resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-                timeDiv.textContent = `DeepL API response time: ${data.deeplResponseTimeMs} ms`;
+                timeDiv.textContent = `DeepL API response time: ${data.responseTimeMs} ms`;
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
                 console.error('Translation error:', error);

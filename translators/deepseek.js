@@ -54,8 +54,8 @@ Only output the translation, no explanations.`
         const endTime = Date.now();
         return {
             translation,
-            romanization,
-            deepseekResponseTimeMs: endTime - startTime
+            responseTimeMs: endTime - startTime,
+            romanization
         };
     } catch (error) {
         console.error('DeepSeek translation error:', error);
