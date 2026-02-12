@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AI Translator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="nav-links">
+        <a href="/">← Back to multi-translator</a>
+    </div>
+
+    <h1 id="pageTitle">AI Translator</h1>
+
+    <textarea id="textInput" rows="8" placeholder="Enter text to translate..."></textarea>
+
+    <select id="languageSelect">
+        <!-- Populated by script based on service -->
+    </select>
+
+    <button id="translateBtn">Translate</button>
+
+    <div id="result"></div>
+    <div id="responseTime" style="color: gray; margin-top: 0.5rem;"></div>
+
+    <script>
+        const SERVICE_CONFIG = {
+            deepl: {
+                name: 'DeepL',
+                endpoint: '/translate',
+                timeLabel: 'DeepL API',
+                languages: [
+                    { value: 'AUTO', label: 'Auto (Japanese <> English)', selected: true },
+                    { value: 'DE', label: 'German' },
+                    { value: 'FR', label: 'French' },
+                    { value: 'ES', label: 'Spanish' },
+                    { value: 'IT', label: 'Italian' },
+                    { value: 'JA', label: 'Japanese' },
+                    { value: 'ZH', label: 'Chinese (Simplified)' }
+                ]
+            },
+            openai: {
+                name: 'OpenAI',
+                endpoint: '/translate/openai',
+                timeLabel: 'OpenAI API',
+                languages: [
+                    { value: 'AUTO', label: 'Auto (Japanese <> English)', selected: true },
+                    { value: 'German', label: 'German' },
+                    { value: 'French', label: 'French' },
+                    { value: 'Spanish', label: 'Spanish' },
+                    { value: 'Italian', label: 'Italian' },
+                    { value: 'Japanese', label: 'Japanese' },
+                    { value: 'Chinese', label: 'Chinese (Simplified)' }
+                ]
+            },
+            deepseek: {
+                name: 'DeepSeek',
+                endpoint: '/translate/deepseek',
+                timeLabel: 'DeepSeek API',
+                languages: [
+                    { value: 'AUTO', label: 'Auto (Japanese <> English)', selected: true },
+                    { value: 'German', label: 'German' },
+                    { value: 'French', label: 'French' },
+                    { value: 'Spanish', label: 'Spanish' },
+                    { value: 'Italian', label: 'Italian' },
+                    { value: 'Japanese', label: 'Japanese' },
+                    { value: 'Chinese', label: 'Chinese (Simplified)' }
+                ]
+            },
+            'google-v2': {
+                name: 'Google V2',
+                endpoint: '/translate/google-v2',
+                timeLabel: 'Google API',
+                languages: [
+                    { value: 'AUTO', label: 'Auto (Japanese <> English)', selected: true },
+                    { value: 'DE', label: 'German' },
+                    { value: 'FR', label: 'French' },
+                    { value: 'ES', label: 'Spanish' },
+                    { value: 'IT', label: 'Italian' },
+                    { value: 'JA', label: 'Japanese' },
+                    { value: 'ZH', label: 'Chinese (Simplified)' }
+                ]
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const serviceKey = params.get('service');
+        const config = SERVICE_CONFIG[serviceKey];
+
+        if (!config) {
+            document.body.innerHTML = '<p>Unknown service. Valid services: deepl, openai, deepseek, google-v2</p>';
+            throw new Error('Unknown service: ' + serviceKey);
+        }
+
+        // Set page title and heading
+        document.title = `AI Translator (${config.name})`;
+        document.getElementById('pageTitle').textContent = `AI Translator (${config.name})`;
+
+        // Populate language select
+        const langSelect = document.getElementById('languageSelect');
+        config.languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang.value;
+            option.textContent = lang.label;
+            if (lang.selected) option.selected = true;
+            langSelect.appendChild(option);
+        });
+
+        async function translate() {
+            const text = document.getElementById('textInput').value;
+            const targetLang = document.getElementById('languageSelect').value;
+            const resultDiv = document.getElementById('result');
+            const timeDiv = document.getElementById('responseTime');
+
+            if (!text.trim()) {
+                resultDiv.textContent = 'Please enter some text to translate';
+                return;
+            }
+
+            resultDiv.textContent = 'Translating...';
+            timeDiv.textContent = '';
+
+            try {
+                const response = await fetch(config.endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text, targetLang })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                resultDiv.textContent = '';
+                data.translation.split('\n').forEach((line, i) => {
+                    if (i > 0) resultDiv.appendChild(document.createElement('br'));
+                    resultDiv.appendChild(document.createTextNode(line));
+                });
+
+                if (data.romanization) {
+                    resultDiv.appendChild(document.createElement('br'));
+                    resultDiv.appendChild(document.createElement('br'));
+                    const romanSpan = document.createElement('span');
+                    romanSpan.className = 'romanization';
+                    romanSpan.innerHTML = data.romanization;
+                    resultDiv.appendChild(romanSpan);
+                }
+                timeDiv.textContent = `${config.timeLabel} response time: ${data.responseTimeMs} ms`;
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+                console.error('Translation error:', error);
+            }
+        }
+
+        document.getElementById('translateBtn').addEventListener('click', translate);
+
+        // Add Enter key binding
+        document.getElementById('textInput').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                translate();
+            }
+        });
+    </script>
+</body>
+
+</html>

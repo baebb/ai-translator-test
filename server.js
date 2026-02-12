@@ -25,24 +25,21 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Serve deepl.html at /deepl path
+// Redirect old individual translator routes to unified template
 app.get('/deepl', (req, res) => {
-    res.sendFile(path.join(__dirname, 'deepl.html'));
+    res.redirect('/translator.html?service=deepl');
 });
 
-// Serve openai.html at /openai path
 app.get('/openai', (req, res) => {
-    res.sendFile(path.join(__dirname, 'openai.html'));
+    res.redirect('/translator.html?service=openai');
 });
 
-// Serve deepseek.html at /deepseek path
 app.get('/deepseek', (req, res) => {
-    res.sendFile(path.join(__dirname, 'deepseek.html'));
+    res.redirect('/translator.html?service=deepseek');
 });
 
-// Serve google-v2.html at /google-v2 path
 app.get('/google-v2', (req, res) => {
-    res.sendFile(path.join(__dirname, 'google-v2.html'));
+    res.redirect('/translator.html?service=google-v2');
 });
 
 app.post('/translate', async (req, res) => {
