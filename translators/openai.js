@@ -62,7 +62,7 @@ Only output the translation, no explanations.`
 
     return {
         translation,
-        openaiResponseTimeMs,
+        responseTimeMs: openaiResponseTimeMs,
         romanization
     };
 } 

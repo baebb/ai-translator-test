@@ -32,8 +32,8 @@ export async function deeplTranslate(text, targetLang) {
     }
 
     return {
-        translations: [{ text: result.text }],
-        deeplResponseTimeMs,
+        translation: result.text,
+        responseTimeMs: deeplResponseTimeMs,
         romanization
     };
 } 

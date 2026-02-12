@@ -158,31 +158,15 @@
                 return;
             }
 
-            let resultText;
-            switch (service) {
-                case 'deepl':
-                    resultText = data.translations[0].text;
-                    break;
-                case 'openai':
-                case 'deepseek':
-                    resultText = data.translation;
-                    break;
-                case 'google':
-                    resultText = data.translatedText;
-                    break;
-                default:
-                    resultText = 'Unknown translation format';
-            }
+            let resultText = data.translation;
 
             if (data.romanization) {
                 resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
             }
             resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
 
-            const responseTime = data.deeplResponseTimeMs || data.openaiResponseTimeMs ||
-                data.deepseekResponseTimeMs || data.googleResponseTimeMs;
-            if (responseTime) {
-                timeDiv.textContent = `${service.charAt(0).toUpperCase() + service.slice(1)} API response time: ${responseTime} ms`;
+            if (data.responseTimeMs) {
+                timeDiv.textContent = `${service.charAt(0).toUpperCase() + service.slice(1)} API response time: ${data.responseTimeMs} ms`;
             }
         }
 

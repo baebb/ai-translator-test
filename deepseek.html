@@ -67,7 +67,7 @@
                     resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
                 }
                 resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-                timeDiv.textContent = `DeepSeek API response time: ${data.deepseekResponseTimeMs} ms`;
+                timeDiv.textContent = `DeepSeek API response time: ${data.responseTimeMs} ms`;
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
                 console.error('Translation error:', error);

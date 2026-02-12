@@ -45,9 +45,9 @@ export async function googleTranslate(text, targetLang) {
         const googleResponseTimeMs = Math.round((endTime[0] * 1000) + (endTime[1] / 1000000));
 
         return {
-            translatedText: translation,
-            romanization,
-            googleResponseTimeMs
+            translation,
+            responseTimeMs: googleResponseTimeMs,
+            romanization
         };
     } catch (error) {
         console.error('Google Translation error:', error);

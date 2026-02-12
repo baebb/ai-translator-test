@@ -62,12 +62,12 @@
                     throw new Error(data.error);
                 }
 
-                let resultText = data.translatedText;
+                let resultText = data.translation;
                 if (data.romanization) {
                     resultText += `\n\n<span class="romanization">${data.romanization}</span>`;
                 }
                 resultDiv.innerHTML = resultText.replace(/\n/g, '<br>');
-                timeDiv.textContent = `Google API response time: ${data.googleResponseTimeMs} ms`;
+                timeDiv.textContent = `Google API response time: ${data.responseTimeMs} ms`;
             } catch (error) {
                 resultDiv.textContent = 'Error: ' + error.message;
                 console.error('Translation error:', error);
